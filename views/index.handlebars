@@ -1,46 +1,46 @@
-<h1>Eat Da Burger!</h1>
+<h1>Task Tracker</h1>
 
-<img src="assets/img/burger.jpg">
+<img src="assets/img/check.jpg">
 
 <div id="ready">
-<h2>Ready to Eat</h2>
-<ul>
-    {{#each burgers}}
-    {{#unless devoured}}
-    <li>
-        {{burger_name}}
+    <h2>To Do</h2>
+    <ul>
+        {{#each burgers}}
+        {{#unless devoured}}
+        <li>
+            {{burger_name}}
 
-        <button class="change-devoured" data-id="{{id}}" data-newdevoured="{{devoured}}">
-            Eat Da Burger!
-        </button>
-    </li>
-    {{/unless}}
-    {{/each}}
-</ul>
+            <button class="change-devoured" data-id="{{id}}" data-newdevoured="{{devoured}}">
+                completed
+            </button>
+        </li>
+        {{/unless}}
+        {{/each}}
+    </ul>
 </div>
 
 <div id="dev">
-<h2>Devoured</h2>
+    <h2>Done</h2>
 
-<ul>
-    {{#each burgers}}
-    {{#if devoured}}
-    <li>
-        {{burger_name}}
-    </li>
-    {{/if}}
-    {{/each}}
-</ul>
+    <ul>
+        {{#each burgers}}
+        {{#if devoured}}
+        <li>
+            {{burger_name}}
+        </li>
+        {{/if}}
+        {{/each}}
+    </ul>
 </div>
 
-<h3>Make a Burger</h3>
+<h3>New Task</h3>
 <form class="create-form">
 
     <div class="form-group">
-        <input type="text" id="bg" name="name" placeholder="Burger You Want to Make">
+        <input type="text" id="bg" name="name" placeholder="Create New Task">
     </div>
 
-    <button type="submit">Make Burger</button>
+    <button type="submit">Add to List</button>
 </form>
 
 <script type="text/javascript">
@@ -51,20 +51,21 @@
             var newDevoured = $(this).data("newdevoured");
 
             var newDevouredState = {
-                devoured: newDevoured
+                id: id,
+                devoured: true
             };
-
+            console.log("id: ", id);
+            console.log("new devoured: ", newDevoured);
             // Send the PUT request.
-            $.ajax("/api/burgers/" + id, {
-                type: "PUT",
+            $.ajax({
+                method: "PUT",
+                url: "/burgers/update",
                 data: newDevouredState
-            }).then(
-                function () {
-                    console.log("changed devoured to", newDevoured);
-                    // Reload the page to get the updated list
-                    location.reload();
-                }
-            );
+            }).then(function (data) {
+                console.log("updated")
+                // reload page to display devoured burger in proper column
+                location.reload();
+            });
         });
 
         $(".create-form").on("submit", function (event) {
